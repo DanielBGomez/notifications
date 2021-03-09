@@ -1,7 +1,5 @@
-// Env
-require('dotenv').config()
-
-// Modules
+// Models
+const Notification = require('../models/Notification')
 
 // Configs
 const NOTIFICATIONS = require('../config/notifications')
@@ -14,6 +12,6 @@ const NOTIFICATIONS = require('../config/notifications')
  */
 class Notifications {
     constructor(params = {}){
-
+        
     }
 }

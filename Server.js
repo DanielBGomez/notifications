@@ -3,12 +3,15 @@ require('dotenv').config()
 
 // Modules
 const { Sequelize } = require('sequelize')
+const { performance } = require('perf_hooks')
 
 // Models
 const Target = require('./models/Target')
 const Notification = require('./models/Notification')
 
-;
+// Performance
+let perf = performance.now()
+
 // Execs
 (async () => {
     console.log("\n⬜ Creating DB Connection...")
@@ -23,16 +26,22 @@ const Notification = require('./models/Notification')
         await DB.authenticate()
         console.log("🟩 Connected!\n")
 
+        console.log("⬜ Loading models...")
+
+        log("⬛ Target... ")
+        await Target(DB)
+        log("Ok\n")
+
+        log("⬛ Notification... ")
+        await Notification(DB)
+        log("Ok\n")
+
+        console.log("🟩 Done!\n")
+
+
         console.log("⬜ Syncing models...")
-
-        console.log("⬛ 'Target' model")
-        await Target(DB).sync()
-        console.log("🟩 Done\n")
-
-        console.log("⬛ 'Notification' model")
-        await Notification(DB).sync()
-        console.log("🟩 Done\n")
-
+        await DB.sync()
+        console.log("🟩 Done!\n")
 
     } catch(err) {
         console.log(`\n`)
@@ -41,4 +50,10 @@ const Notification = require('./models/Notification')
     }
 })()
 
-console.log
+
+// Use this for "inline" logs
+function log(...messages) {
+    messages.forEach(msg => {
+        process.stdout.write(msg)
+    })
+}
