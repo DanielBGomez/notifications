@@ -1,0 +1,28 @@
+{
+  "name": "notifications",
+  "version": "0.1.0",
+  "description": "Notifications server module for Owl Digital Design applications",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OwlDigitalDesign/notifications.git"
+  },
+  "keywords": [
+    "Notifications"
+  ],
+  "author": "Owl Digital Design",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OwlDigitalDesign/notifications/issues"
+  },
+  "homepage": "https://github.com/OwlDigitalDesign/notifications#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "node-mailjet": "^3.3.1",
+    "sequelize": "^6.5.0",
+    "validator": "^10.11.0"
+  }
+}
