@@ -19,7 +19,7 @@ class Notification extends Model {
      * 
      * @param {*} param0 
      */
-    static prepare({ uuid, owner, category, topic, slug, message, payload = {}, status }){
+    static prepare({ uuid, user, category, topic, slug, message, payload = {}, status }){
         // Validations
         if(!slug) throw { err: "NO_SLUG_PROVIDED", msg: "The slug param is required", data: {} }
         if(typeof payload != "object") throw { err: "INVALID_PAYLOAD", msg: "The payload must be an object", data: { payload } }
@@ -48,7 +48,7 @@ class Notification extends Model {
         payload = JSON.stringify(payload)
 
         // Create instance
-        return Notification.build({ uuid, owner, category, topic, slug, message, payload, status })
+        return Notification.build({ uuid, user, category, topic, slug, message, payload, status })
     }
 
 }
