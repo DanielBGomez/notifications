@@ -14,7 +14,7 @@ module.exports = {
                 CONTENT: "The body content. This must be inside an object."
             },
             CONFIGS: {
-                MAILJET_TEMPLATE_ID: "1806287",
+                MAILJET_TEMPLATE_ID: 2608825,
                 SENDER: {
                     NAME: "Jhon Doe",
                     EMAIL: "jhon@doe.com"

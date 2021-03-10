@@ -2,21 +2,56 @@
 const { Sequelize, DataTypes, Model } = require('sequelize')
 
 // Enums
-const STATUS = {
-    '-1': 'ARCHIVED',
-    '0': 'SENT',
-    '1': 'RECEIVED',
-    '2': 'READ'
-}
+const STATUS = require('./NotificationStatus').STATUS
+
+// Configs
+const NOTIFICATIONS = require('../config/notifications')
 
 /**
  * Notification Model
  * 
  * @type Model
- * @version 0.1.0
+ * @version 0.2.0
  * @author Daniel B Gómez <contact@danielbgomez.com>
  */
-class Notification extends Model {}
+class Notification extends Model {
+    /**
+     * 
+     * @param {*} param0 
+     */
+    static prepare({ uuid, owner, category, topic, slug, message, payload = {}, status }){
+        // Validations
+        if(!slug) throw { err: "NO_SLUG_PROVIDED", msg: "The slug param is required", data: {} }
+        if(typeof payload != "object") throw { err: "INVALID_PAYLOAD", msg: "The payload must be an object", data: { payload } }
+
+        // Has default values?
+        let NOTIF_DATA = NOTIFICATIONS;
+        // Split slug by slash and find in config object.
+        const notFound = slug.split("/").some(key => {
+            /**
+             * The slash represents a namespace, that's why the loop is
+             * recursive within the prev object.
+             * 
+             * If the current key is not found, it means the target slug
+             * doesn't exists in the config.
+             */
+            NOTIF_DATA = NOTIF_DATA[key]
+            if(typeof NOTIF_DATA != "object") return true
+        })
+        // If found, use config values as default values
+        if(!notFound){
+            // Parse message
+            if(!message) message = NOTIF_DATA.BRIEF
+        }
+
+        // Sanitize payload
+        payload = JSON.stringify(payload)
+
+        // Create instance
+        return Notification.build({ uuid, owner, category, topic, slug, message, payload, status })
+    }
+
+}
 
 /**
  * Initialize the notification model
@@ -36,13 +71,12 @@ module.exports = sequelize => Notification.init({
         allowNull: false,
         unique: true
     },
+    category: {
+        type: DataTypes.STRING
+    },
     owner: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
-        allowNull: false
-    },
-    version: {
-        type: DataTypes.STRING(10),
         allowNull: false
     },
     slug: {
@@ -55,10 +89,6 @@ module.exports = sequelize => Notification.init({
     },  
     payload: {
         type: DataTypes.TEXT
-    },
-    status: {
-        type: DataTypes.TINYINT(1),
-        defaultValue: 0
     }
 }, {
     sequelize,
@@ -69,12 +99,25 @@ module.exports = sequelize => Notification.init({
     updatedAt: 'updated',
 
     indexes: [
-        { name: "notification_owner", using: "BTREE", fields: [ 'owner' ] },
-        { name: "notification_version", using: "BTREE", fields: [ 'version' ] },
-        { name: "notification_slug", using: "BTREE", fields: [ 'slug' ] },
-        { name: "notification_status", using: "BTREE", fields: [ 'status' ] }
+        { name: "category", using: "BTREE", fields: [ 'category' ] },
+        { name: "owner", using: "BTREE", fields: [ 'owner' ] },
+        { name: "slug", using: "BTREE", fields: [ 'slug' ] }
     ]
 })
+
+/**
+ * Foreing keys handler
+ */
+module.exports.FK = ({ Notification, Topic }) => {
+    // Topic
+    Topic.hasMany(Notification)
+    Notification.belongsTo(Topic, {
+        foreignKey: {
+            type: DataTypes.BIGINT.UNSIGNED,
+            allowNull: true
+        }
+    })
+}
 
 // ENUMS Exports
 module.exports.STATUS = STATUS
