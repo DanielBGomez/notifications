@@ -74,7 +74,7 @@ module.exports = sequelize => Notification.init({
     category: {
         type: DataTypes.STRING
     },
-    owner: {
+    user: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false

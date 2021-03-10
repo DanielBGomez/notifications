@@ -30,7 +30,7 @@ module.exports = sequelize => NotificationStatus.init({
         primaryKey: true,
         autoIncrement: true
     },
-    owner: {
+    user: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false

@@ -64,7 +64,7 @@ module.exports = sequelize => Target.init({
             }
         }
     },
-    owner: {
+    user: {
         type: DataTypes.UUID,
         allowNull: false
     },
